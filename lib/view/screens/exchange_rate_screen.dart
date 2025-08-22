@@ -1,6 +1,7 @@
 import 'package:factor/src/components.dart';
 import 'package:factor/src/config.dart';
 import 'package:factor/src/screens.dart';
+import 'package:factor/src/view_model.dart';
 import 'package:flutter/material.dart';
 
 class ExchangeRateScreen extends StatefulWidget {
@@ -11,7 +12,7 @@ class ExchangeRateScreen extends StatefulWidget {
 }
 
 class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
-  final List<String> _keyPadValues = ['7', '8', '9', '4', '5', '6', '1', '2', '3', '00', '0', '.'];
+  final ExchangeRateCalculator _exchangeRateProvider = ExchangeRateCalculator();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +86,7 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                   Expanded(
                     flex: 2,
                     child: Wrap(
-                      children: _keyPadValues
+                      children: _exchangeRateProvider.keyPadValues
                           .map(
                             (value) => Padding(
                               padding: const EdgeInsets.only(right: 64, bottom: 48),

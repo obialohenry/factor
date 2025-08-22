@@ -1,0 +1,1 @@
+export 'package:factor/view_model/exchange_rate_calculator.dart';
