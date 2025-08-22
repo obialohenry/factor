@@ -50,7 +50,9 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                             MaterialPageRoute(builder: (context) => SelectCurrencyScreen()),
                           );
                         },
-                        trailing: '0',
+                        trailing: _exchangeRateProvider.coinAmount.isEmpty
+                            ? '0'
+                            : _exchangeRateProvider.coinAmount.join(''),
                         highlight: true,
                       ),
                       Gap(24),
@@ -62,7 +64,7 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                             MaterialPageRoute(builder: (context) => SelectCurrencyScreen()),
                           );
                         },
-                        trailing: '0',
+                        trailing: _exchangeRateProvider.currencyAmount.toString(),
                       ),
                     ],
                   ),
@@ -95,6 +97,8 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                                 fontSize: 32,
                                 onTap: () {
                                   print('🔥🔥 $value');
+                                  _exchangeRateProvider.onKeyPressed(value);
+                                  setState(() {});
                                 },
                               ),
                             ),
@@ -110,10 +114,16 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                         text: FactorStrings.lblClear,
                         fontSize: 32,
                         color: FactorColorsDark.kSunsetOrange,
-                        onTap: () {},
+                        onTap: () {
+                          _exchangeRateProvider.onKeyPressed('clear');
+                          setState(() {});
+                        },
                       ),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          _exchangeRateProvider.onKeyPressed('delete');
+                          setState(() {});
+                        },
                         child: Icon(
                           Icons.backspace_outlined,
                           color: FactorColorsDark.kSunsetOrange,
