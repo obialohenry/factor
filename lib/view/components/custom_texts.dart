@@ -53,7 +53,7 @@ class TextView extends StatelessWidget {
               fontFamily: fontFamily ?? FactorStrings.inter,
               fontSize: fontSize != null ? fontSize! : 16,
               fontWeight: fontWeight ?? FontWeight.w400,
-              color: color ?? FactorColors.kTextBlack,
+              color: color ?? FactorColorsDark.kSoftWhite,
               decoration: decoration,
               wordSpacing: wordSpacing,
               height: lineHeight,

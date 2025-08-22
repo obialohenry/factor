@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:factor/src/config.dart';
 import 'package:factor/src/screens.dart';
 
 Future<void> main() async {
@@ -34,7 +33,6 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: FactorColors.kPrimary),
         useMaterial3: true,
       ),
       home: const ExchangeRateScreen(),
