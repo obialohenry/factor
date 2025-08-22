@@ -10,9 +10,12 @@ import 'package:flutter/material.dart';
 class FactorColorsDark {
   static const kMidnight = Color(0xff0D0D0D);
   static const kSoftWhite = Color(0xffFAFAFA);
+  static const kLightGray = Color(0xff3D3D3D);
   static const kGunmetal = Color(0xff2C2C2C);
+  static const kMediumGray = Color(0xff6E6E6E);
   static const kEmeraldTeal = Color(0xff2AB3A6);
   static const kSunsetOrange = Color(0xffFF6B35);
+  static const kTransparent = Colors.transparent;
 }
 
 class FactorColorsLight {
@@ -20,6 +23,5 @@ class FactorColorsLight {
   static const kJetBlack = Color(0xff1A1A1A);
   static const kAshGray = Color(0xffE5E5E5);
   static const kEmeraldTeal = Color(0xff2AB3A6);
-  static const kSunsetOrange = Color(0xffFF6B35);  
+  static const kSunsetOrange = Color(0xffFF6B35);
 }
-
