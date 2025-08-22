@@ -1,5 +1,6 @@
 import 'package:factor/src/components.dart';
 import 'package:factor/src/config.dart';
+import 'package:factor/src/screens.dart';
 import 'package:flutter/material.dart';
 
 class ExchangeRateScreen extends StatefulWidget {
@@ -42,12 +43,26 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                     children: [
                       ExchangeRateItem(
                         title: 'Solana',
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SelectCurrencyScreen()),
+                          );
+                        },
                         trailing: '0',
                         highlight: true,
                       ),
                       Gap(24),
-                      ExchangeRateItem(title: 'US Dollar USD', onTap: () {}, trailing: '0'),
+                      ExchangeRateItem(
+                        title: 'US Dollar USD',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SelectCurrencyScreen()),
+                          );
+                        },
+                        trailing: '0',
+                      ),
                     ],
                   ),
                   TextView(
