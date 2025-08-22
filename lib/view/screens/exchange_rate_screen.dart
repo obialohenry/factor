@@ -90,16 +90,26 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                     child: Wrap(
                       children: _exchangeRateProvider.keyPadValues
                           .map(
-                            (value) => Padding(
-                              padding: const EdgeInsets.only(right: 64, bottom: 48),
-                              child: TextView(
-                                text: value,
-                                fontSize: 32,
-                                onTap: () {
-                                  print('🔥🔥 $value');
-                                  _exchangeRateProvider.onKeyPressed(value);
-                                  setState(() {});
-                                },
+                            (value) => GestureDetector(
+                              onTap: () {},
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 32, bottom: 40),
+                                child: InkWell(
+                                  onTap: () {
+                                    print('🔥🔥 $value');
+                                    _exchangeRateProvider.onKeyPressed(value);
+                                    setState(() {});
+                                  },
+                                  child: Container(
+                                    width: 50,
+                                    height: 50,
+                                    // color: Colors.red,
+                                    color: FactorColorsDark.kTransparent,
+                                    child: Center(
+                                      child: TextView(text: value, fontSize: 32, onTap: () {}),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           )
