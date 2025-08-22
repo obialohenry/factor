@@ -90,11 +90,19 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextView(text: 'C', fontSize: 32, color: FactorColorsDark.kSunsetOrange),
-                      Icon(
-                        Icons.backspace_outlined,
+                      TextView(
+                        text: FactorStrings.lblClear,
+                        fontSize: 32,
                         color: FactorColorsDark.kSunsetOrange,
-                        size: 32,
+                        onTap: () {},
+                      ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Icon(
+                          Icons.backspace_outlined,
+                          color: FactorColorsDark.kSunsetOrange,
+                          size: 32,
+                        ),
                       ),
                     ],
                   ),

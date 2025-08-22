@@ -1,6 +1,7 @@
 class FactorStrings {
   static const factor = 'Factor';
   static const inter = 'Inter';
+  static const lblClear = 'C';
   // static const hdrTrackYourSpendingEffortlessly = 'Track Your Spending, Effortlessly';
   // static const btnGetStarted = 'Get Started';
   // static const balanceSheetDescription =
