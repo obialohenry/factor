@@ -50,9 +50,9 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                             MaterialPageRoute(builder: (context) => SelectCurrencyScreen()),
                           );
                         },
-                        trailing: _exchangeRateProvider.coinAmount.isEmpty
+                        trailing: _exchangeRateProvider.coinAmountDigits.isEmpty
                             ? '0'
-                            : _exchangeRateProvider.coinAmount.join(''),
+                            : _exchangeRateProvider.coinAmountDigits.join(''),
                         highlight: true,
                       ),
                       Gap(24),
@@ -147,7 +147,7 @@ class ExchangeRateItem extends StatelessWidget {
   /// an forward icon signifying that different currencies can be selected,
   ///  and the corresponding value on the right.
   /// If [highlight] is true, the value is shown with an accent color.
-  const ExchangeRateItem({
+  ExchangeRateItem({
     super.key,
     required this.onTap,
     required this.title,
@@ -158,6 +158,8 @@ class ExchangeRateItem extends StatelessWidget {
   final String title;
   final String trailing;
   final bool highlight;
+
+  final ExchangeRateCalculator _exchangeRateProvider = ExchangeRateCalculator();
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -175,7 +177,7 @@ class ExchangeRateItem extends StatelessWidget {
         ),
         TextView(
           text: trailing,
-          fontSize: 32,
+          fontSize: _exchangeRateProvider.exchangeRateItemFontSize,
           color: highlight ? FactorColorsDark.kSunsetOrange : null,
         ),
       ],
