@@ -2,6 +2,7 @@ import 'package:factor/src/components.dart';
 import 'package:factor/src/config.dart';
 import 'package:factor/src/screens.dart';
 import 'package:factor/src/view_model.dart';
+import 'package:factor/utils/util_functions.dart';
 import 'package:flutter/material.dart';
 
 class ExchangeRateScreen extends StatefulWidget {
@@ -52,7 +53,9 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                         },
                         trailing: _exchangeRateProvider.coinAmountDigits.isEmpty
                             ? '0'
-                            : _exchangeRateProvider.coinAmountDigits.join(''),
+                            : UtilFunctions.formatAmount(
+                                double.parse(_exchangeRateProvider.coinAmountDigits.join('')),
+                              ),
                         highlight: true,
                       ),
                       Gap(24),
@@ -64,7 +67,9 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                             MaterialPageRoute(builder: (context) => SelectCurrencyScreen()),
                           );
                         },
-                        trailing: _exchangeRateProvider.currencyAmount.toString(),
+                        trailing: UtilFunctions.formatAmount(
+                          _exchangeRateProvider.currencyAmount.toDouble(),
+                        ),
                       ),
                     ],
                   ),
