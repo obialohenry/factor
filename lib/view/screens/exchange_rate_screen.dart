@@ -1,8 +1,8 @@
 import 'package:factor/src/components.dart';
 import 'package:factor/src/config.dart';
 import 'package:factor/src/screens.dart';
+import 'package:factor/src/utils.dart';
 import 'package:factor/src/view_model.dart';
-import 'package:factor/utils/util_functions.dart';
 import 'package:flutter/material.dart';
 
 class ExchangeRateScreen extends StatefulWidget {
