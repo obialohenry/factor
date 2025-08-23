@@ -22,6 +22,7 @@ class ExchangeRateCalculator {
     if (value == 'clear') {
       _coinAmountDigits.clear();
       _maximumDigitsReached = false;
+      adjustFontSizeByListLength();
       return;
     }
     if (value == 'delete') {
