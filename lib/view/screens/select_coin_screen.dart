@@ -75,7 +75,9 @@ class _SelectCoinScreenState extends State<SelectCoinScreen> {
                     ),
                     child: _exchangeRateProvider.selectedCoin == index
                         ? Center(
-                            child: Container(
+                            child: AnimatedContainer(
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.elasticOut,
                               height: 12,
                               width: 12,
                               decoration: BoxDecoration(

@@ -46,7 +46,7 @@ class _SelectCurrencyScreenState extends State<SelectCurrencyScreen> {
         ],
       ),
       body: ListView.builder(
-        itemCount: 5,
+        itemCount: 20,
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.only(top: 30, left: 15, right: 15),
@@ -75,7 +75,9 @@ class _SelectCurrencyScreenState extends State<SelectCurrencyScreen> {
                     ),
                     child: _exchangeRateProvider.selectedCurrency == index
                         ? Center(
-                            child: Container(
+                            child: AnimatedContainer(
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.elasticOut,
                               height: 12,
                               width: 12,
                               decoration: BoxDecoration(
