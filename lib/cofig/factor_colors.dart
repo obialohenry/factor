@@ -16,7 +16,8 @@ class FactorColorsDark {
   static const kEmeraldTeal = Color(0xff2AB3A6);
   static const kSunsetOrange = Color(0xffFF6B35);
   static const kTransparent = Colors.transparent;
-  static const kJetBlack = Color(0xff242424);
+  static const kSlateGray = Color(0xff404040);
+  static const kWhite = Colors.white;
 }
 
 class FactorColorsLight {

@@ -11,12 +11,13 @@ void showToast({required String msg}) {
   BotToast.showCustomNotification(
     toastBuilder: (cancelFunc) {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        margin: EdgeInsets.only(bottom: 80),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: FactorColorsDark.kJetBlack,
+          color: FactorColorsDark.kSlateGray,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: TextView(text: msg, color: FactorColorsDark.kSoftWhite, fontWeight: FontWeight.w500),
+        child: TextView(text: msg, color: FactorColorsDark.kWhite, fontWeight: FontWeight.w700),
       );
     },
     align: Alignment.bottomCenter,
