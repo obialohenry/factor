@@ -3,14 +3,14 @@ import 'package:factor/src/config.dart';
 import 'package:factor/src/view_model.dart';
 import 'package:flutter/material.dart';
 
-class SelectCurrencyScreen extends StatefulWidget {
-  const SelectCurrencyScreen({super.key});
+class SelectCoinScreen extends StatefulWidget {
+  const SelectCoinScreen({super.key});
 
   @override
-  State<SelectCurrencyScreen> createState() => _SelectCurrencyScreenState();
+  State<SelectCoinScreen> createState() => _SelectCoinScreenState();
 }
 
-class _SelectCurrencyScreenState extends State<SelectCurrencyScreen> {
+class _SelectCoinScreenState extends State<SelectCoinScreen> {
   final ExchangeRateCalculator _exchangeRateProvider = ExchangeRateCalculator();
   @override
   Widget build(BuildContext context) {
@@ -23,12 +23,17 @@ class _SelectCurrencyScreenState extends State<SelectCurrencyScreen> {
           padding: const EdgeInsets.only(left: 15),
           child: Row(
             children: [
-              Icon(Icons.arrow_back_sharp, color: FactorColorsDark.kSoftWhite, size: 25),
-              Gap(20),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Icon(Icons.arrow_back_sharp, color: FactorColorsDark.kSoftWhite, size: 25),
+              ),
+              Gap(10),
               TextView(
-                text: FactorStrings.hdrSelectCurrency,
+                text: FactorStrings.hdrSelectCoin,
                 fontWeight: FontWeight.bold,
-                fontSize: 19,
+                fontSize: 18,
               ),
             ],
           ),
@@ -50,25 +55,25 @@ class _SelectCurrencyScreenState extends State<SelectCurrencyScreen> {
             padding: const EdgeInsets.only(bottom: 30),
             child: GestureDetector(
               onTap: () {
-                _exchangeRateProvider.selectACurrency(index);
+                _exchangeRateProvider.selectACoin(index);
                 setState(() {});
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextView(text: 'Algerian Dinar DZD', fontSize: 16, fontWeight: FontWeight.w600),
+                  TextView(text: 'Algerian Dinar DZD', fontSize: 18, fontWeight: FontWeight.w500),
                   Container(
                     height: 20,
                     width: 20,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: _exchangeRateProvider.selectedCurrency == index
+                        color: _exchangeRateProvider.selectedCoin == index
                             ? FactorColorsDark.kSunsetOrange
                             : FactorColorsDark.kLightGray,
                       ),
                       shape: BoxShape.circle,
                     ),
-                    child: _exchangeRateProvider.selectedCurrency == index
+                    child: _exchangeRateProvider.selectedCoin == index
                         ? Center(
                             child: Container(
                               height: 12,

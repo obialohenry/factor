@@ -49,7 +49,7 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => SelectCurrencyScreen()),
+                            MaterialPageRoute(builder: (context) => SelectCoinScreen()),
                           );
                         },
                         trailing: _exchangeRateProvider.coinAmountDigits.isEmpty

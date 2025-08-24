@@ -13,6 +13,10 @@ class ExchangeRateCalculator {
   double get exchangeRateItemFontSize => _exchangeRateItemFontSize;
   bool _maximumDigitsReached = false;
   bool get maximumDigitsReached => _maximumDigitsReached;
+  int _selectedCurrency = 0;
+  int get selectedCurrency => _selectedCurrency;
+  int _selectedCoin = 0;
+  int get selectedCoin => _selectedCoin;
 
   ///Method handles keypad tap actions.
   ///When any of the `[clear,delete, and number value keys] is pressed,
@@ -60,6 +64,16 @@ class ExchangeRateCalculator {
       final reductionAmount = (_coinAmountDigits.length - reductionStartLength) * reduceFontSizeBy;
       _exchangeRateItemFontSize = maxFontSize - reductionAmount;
     }
+  }
+  
+  ///Sets the currency index selected by the user for coin rate conversion.
+  void selectACurrency(int index) {
+    _selectedCurrency = index;
+  }
+
+  ///Sets the coin index selected by the user for conversion in the chosen currency.
+  void selectACoin(int index) {
+    _selectedCoin = index;
   }
 
   /// Converts the entered coin amount into the selected currency
