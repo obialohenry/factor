@@ -3,6 +3,7 @@ import 'package:factor/src/config.dart';
 import 'package:factor/src/screens.dart';
 import 'package:factor/src/utils.dart';
 import 'package:factor/src/view_model.dart';
+import 'package:factor/utils/app_toast.dart';
 import 'package:flutter/material.dart';
 
 class ExchangeRateScreen extends StatefulWidget {
@@ -101,8 +102,9 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                                 text: value,
                                 fontSize: 32,
                                 onTap: () {
-                                  print('🔥🔥 $value');
-                                  _exchangeRateProvider.onKeyPressed(value);
+                                  _exchangeRateProvider.maximumDigitsReached
+                                      ? showToast(msg: FactorStrings.sbMaximumDigitsReached)
+                                      : _exchangeRateProvider.onKeyPressed(value);
                                   setState(() {});
                                 },
                               ),
