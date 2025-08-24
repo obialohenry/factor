@@ -29,7 +29,7 @@ class _SelectCoinScreenState extends State<SelectCoinScreen> {
                 },
                 child: Icon(Icons.arrow_back_sharp, color: FactorColorsDark.kSoftWhite, size: 25),
               ),
-              Gap(10),
+              Gap(20),
               TextView(
                 text: FactorStrings.hdrSelectCoin,
                 fontWeight: FontWeight.bold,

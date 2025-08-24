@@ -23,12 +23,17 @@ class _SelectCurrencyScreenState extends State<SelectCurrencyScreen> {
           padding: const EdgeInsets.only(left: 15),
           child: Row(
             children: [
-              Icon(Icons.arrow_back_sharp, color: FactorColorsDark.kSoftWhite, size: 25),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Icon(Icons.arrow_back_sharp, color: FactorColorsDark.kSoftWhite, size: 25),
+              ),
               Gap(20),
               TextView(
                 text: FactorStrings.hdrSelectCurrency,
                 fontWeight: FontWeight.bold,
-                fontSize: 19,
+                fontSize: 18,
               ),
             ],
           ),
