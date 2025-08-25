@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 class UtilFunctions {
-  /// Formats a numeric string [amount] into a readable string with comma 
+  /// Formats a numeric string [amount] into a readable string with comma
   /// seperators.
   /// - Returns `'0'` if [amount] is `'0'`.
   /// - If [amount] contains a decimal point (`.`):
@@ -15,7 +15,7 @@ class UtilFunctions {
     if (amount.contains('.')) {
       final amountAsList = amount.split('.');
       if (amountAsList[1].isNotEmpty) {
-        return '${NumberFormat('#,##0').format(int.parse(amountAsList[0]))}.$amountAsList[1]';
+        return '${NumberFormat('#,##0').format(int.parse(amountAsList[0]))}.${amountAsList[1]}';
       } else {
         return '${NumberFormat('#,##0').format(int.parse(amountAsList[0]))}.';
       }
