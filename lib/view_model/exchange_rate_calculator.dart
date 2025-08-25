@@ -1,3 +1,5 @@
+import 'package:factor/src/utils.dart';
+
 class ExchangeRateCalculator {
   ExchangeRateCalculator._();
   static final ExchangeRateCalculator _instance = ExchangeRateCalculator._();
@@ -5,8 +7,8 @@ class ExchangeRateCalculator {
 
   final List<String> _keyPadValues = ['7', '8', '9', '4', '5', '6', '1', '2', '3', '00', '0', '.'];
   List<String> get keyPadValues => _keyPadValues;
-  final List<String> _coinAmountDigits = [];
-  List<String> get coinAmountDigits => _coinAmountDigits;
+  String _coinAmountDigits = '0';
+  String get coinAmountDigits => _coinAmountDigits;
   num _currencyAmount = 0;
   num get currencyAmount => _currencyAmount;
   double _exchangeRateItemFontSize = 32;
@@ -19,21 +21,25 @@ class ExchangeRateCalculator {
   int get selectedCoin => _selectedCoin;
 
   ///Method handles keypad tap actions.
-  ///When any of the `[clear,delete, and number value keys] is pressed,
-  ///It either clears, deletes the last value, or appends the key’s value as a string
-  ///to the private `coinAmount` list variable depending on the key pressed.
+  /// - If the key is `'clear'`, resets [_coinAmountDigits] to `'0'`.
+  /// - If the key is `'delete'`, removes the last character or resets to `'0'`
+  ///   when only one character remains.
+  /// - Otherwise, appends the digit (or `.`) to [_coinAmountDigits],
+  ///   unless the maximum length is reached.
   void onKeyPressed(String value) {
     if (value == 'clear') {
-      _coinAmountDigits.clear();
+      _coinAmountDigits = '0';
       _maximumDigitsReached = false;
       adjustFontSizeByListLength();
       return;
     }
     if (value == 'delete') {
-      if (_coinAmountDigits.isNotEmpty) {
-        _coinAmountDigits.removeLast();
+      if (_coinAmountDigits.length > 1) {
+        _coinAmountDigits = _coinAmountDigits.substring(0, _coinAmountDigits.length - 1);
         _maximumDigitsReached = false;
         adjustFontSizeByListLength();
+      } else {
+        _coinAmountDigits = '0';
       }
       return;
     }
@@ -45,11 +51,17 @@ class ExchangeRateCalculator {
     }
   }
 
-  ///Adds digit from keypad to the coin amount private list variable.
-  ///The `.` character cannot be added more than once.
+  /// Appends a digit from the keypad to [_coinAmountDigits].
+  /// - Prevents multiple `.` characters.
+  /// - Replaces the initial `'0'` when a non-zero digit is entered.
   void addDigitToCoinAmount(String value) {
     if (value == '.' && _coinAmountDigits.contains('.')) return;
-    _coinAmountDigits.add(value);
+    if (_coinAmountDigits == '0') {
+      if (value == '0') return;
+      _coinAmountDigits = value;
+    } else {
+      _coinAmountDigits = _coinAmountDigits + value;
+    }
   }
 
   /// Adjusts the font size of an exchange item based on the length of
@@ -65,7 +77,7 @@ class ExchangeRateCalculator {
       _exchangeRateItemFontSize = maxFontSize - reductionAmount;
     }
   }
-  
+
   ///Sets the currency index selected by the user for coin rate conversion.
   void selectACurrency(int index) {
     _selectedCurrency = index;

@@ -52,11 +52,9 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                             MaterialPageRoute(builder: (context) => SelectCoinScreen()),
                           );
                         },
-                        trailing: _exchangeRateProvider.coinAmountDigits.isEmpty
-                            ? '0'
-                            : UtilFunctions.formatAmount(
-                                double.parse(_exchangeRateProvider.coinAmountDigits.join('')),
-                              ),
+                        trailing: UtilFunctions.formatAmount(
+                          _exchangeRateProvider.coinAmountDigits,
+                        ),
                         highlight: true,
                       ),
                       Gap(24),
@@ -69,7 +67,7 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                           );
                         },
                         trailing: UtilFunctions.formatAmount(
-                          _exchangeRateProvider.currencyAmount.toDouble(),
+                          _exchangeRateProvider.currencyAmount.toString(),
                         ),
                       ),
                     ],
