@@ -1,5 +1,3 @@
-import 'package:factor/src/utils.dart';
-
 class ExchangeRateCalculator {
   ExchangeRateCalculator._();
   static final ExchangeRateCalculator _instance = ExchangeRateCalculator._();
@@ -53,11 +51,18 @@ class ExchangeRateCalculator {
 
   /// Appends a digit from the keypad to [_coinAmountDigits].
   /// - Prevents multiple `.` characters.
-  /// - Replaces the initial `'0'` when a non-zero digit is entered.
+  /// - If the current value is `'0'`:
+  ///   - Ignores additional `'0'` inputs.
+  ///   - Allows `'0.'` when `'.'` is pressed.
+  ///   - Replaces `'0'` with a non-zero digit.
   void addDigitToCoinAmount(String value) {
     if (value == '.' && _coinAmountDigits.contains('.')) return;
     if (_coinAmountDigits == '0') {
       if (value == '0') return;
+      if (value == '.') {
+        _coinAmountDigits = _coinAmountDigits + value;
+        return;
+      }
       _coinAmountDigits = value;
     } else {
       _coinAmountDigits = _coinAmountDigits + value;
