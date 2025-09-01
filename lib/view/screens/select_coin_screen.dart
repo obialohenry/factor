@@ -70,7 +70,6 @@ class _SelectCoinScreenState extends State<SelectCoinScreen> {
                 ),
         ),
       ),
-
       body: Stack(
         children: [
           ListView.builder(

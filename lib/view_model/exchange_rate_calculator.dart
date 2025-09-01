@@ -23,6 +23,8 @@ class ExchangeRateCalculator {
   bool get searchingForACurrency => _searchingForACurrency;
   bool _isSelectCoinScreenInteractionDisabled = false;
   bool get isSelectCoinScreenInteractionDisabled => _isSelectCoinScreenInteractionDisabled;
+  bool _isSelectCurrencyScreenInteractionDisabled = false;
+  bool get isSelectCurrencyScreenInteractionDisabled => _isSelectCurrencyScreenInteractionDisabled;
 
   ///Method handles keypad tap actions.
   /// - If the key is `'clear'`, resets [_coinAmountDigits] to `'0'`.
@@ -112,10 +114,17 @@ class ExchangeRateCalculator {
     _isSelectCoinScreenInteractionDisabled = value;
   }
 
-  ///Sets the searchingForACurrency status to either `true` or `false` based on
-  ///user's action.
+  ///Sets the searchingForACurrency and Screen interaction disability status to
+  /// either `true` or `false` based on user's action.
   void setSearchingForACurrency(bool value) {
+    _isSelectCurrencyScreenInteractionDisabled = value;
     _searchingForACurrency = value;
+  }
+
+  ///Sets the select currency Screen interaction disability status to
+  ///either `true` or `false` based on user's action.
+  void setSelectCurrencyScreenInteractionDisabilityStatus(bool value) {
+    _isSelectCurrencyScreenInteractionDisabled = value;
   }
 
   /// Converts the entered coin amount into the selected currency
