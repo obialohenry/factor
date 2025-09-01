@@ -18,6 +18,8 @@ class FactorColorsDark {
   static const kTransparent = Colors.transparent;
   static const kSlateGray = Color(0xff404040);
   static const kWhite = Colors.white;
+  static const kCharcoal = Color(0xff262626);
+  static const kCarbonGray = Color(0xff323232);
 }
 
 class FactorColorsLight {

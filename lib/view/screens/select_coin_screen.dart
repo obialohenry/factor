@@ -12,87 +12,131 @@ class SelectCoinScreen extends StatefulWidget {
 
 class _SelectCoinScreenState extends State<SelectCoinScreen> {
   final ExchangeRateCalculator _exchangeRateProvider = ExchangeRateCalculator();
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFieldsFocus = FocusNode();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFieldsFocus.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: FactorColorsDark.kMidnight,
-      appBar: AppBar(
-        backgroundColor: FactorColorsDark.kMidnight,
-        leadingWidth: 200,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 15),
-          child: Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Icon(Icons.arrow_back_sharp, color: FactorColorsDark.kSoftWhite, size: 25),
-              ),
-              Gap(20),
-              TextView(
-                text: FactorStrings.hdrSelectCoin,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ],
-          ),
+      appBar: PreferredSize(
+        preferredSize: Size(0, 40),
+        child: AnimatedSwitcher(
+          duration: Duration(milliseconds: 600),
+          transitionBuilder: (child, animation) {
+            return ScaleTransition(
+              scale: CurvedAnimation(parent: animation, curve: Curves.elasticOut),
+              child: child,
+            );
+          },
+          child: _exchangeRateProvider.searchingForACoin
+              ? FactorsAppBars.searchAppBar(
+                  context,
+                  controller: _searchController,
+                  focusNode: _searchFieldsFocus,
+                  onCancelTap: () {
+                    _exchangeRateProvider.setSearchingForACoin(false);
+                    _searchController.clear();
+                    setState(() {});
+                  },
+                  onTextFieldChange: (value) {
+                    if (_searchController.text.isEmpty) {
+                      _exchangeRateProvider.setSelectCoinScreenInteractionDisabilityStatus(true);
+                    } else if (_searchController.text.isNotEmpty) {
+                      _exchangeRateProvider.setSelectCoinScreenInteractionDisabilityStatus(false);
+                    }
+                    setState(() {});
+                  },
+                  onCloseIconTap: () {
+                    _searchController.clear();
+                    _exchangeRateProvider.setSelectCoinScreenInteractionDisabilityStatus(true);
+                    setState(() {});
+                  },
+                )
+              : FactorsAppBars.selectAppBar(
+                  context,
+                  title: FactorStrings.hdrSelectCoin,
+                  onSearchOnTap: () {
+                    _exchangeRateProvider.setSearchingForACoin(true);
+                    setState(() {});
+                  },
+                ),
         ),
-        actions: [
-          Padding(
-            padding: EdgeInsetsGeometry.only(right: 15),
-            child: Icon(Icons.search_rounded, color: FactorColorsDark.kSoftWhite, size: 28),
-          ),
-        ],
       ),
-      body: ListView.builder(
-        itemCount: 5,
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.only(top: 30, left: 15, right: 15),
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 30),
+
+      body: Stack(
+        children: [
+          ListView.builder(
+            itemCount: 5,
+            shrinkWrap: true,
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.only(top: 30, left: 15, right: 15),
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: GestureDetector(
+                  onTap: () {
+                    _exchangeRateProvider.selectACoin(index);
+                    setState(() {});
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextView(
+                        text: 'Algerian Dinar DZD',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      Container(
+                        height: 20,
+                        width: 20,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: _exchangeRateProvider.selectedCoin == index
+                                ? FactorColorsDark.kSunsetOrange
+                                : FactorColorsDark.kLightGray,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: _exchangeRateProvider.selectedCoin == index
+                            ? Center(
+                                child: AnimatedContainer(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.elasticOut,
+                                  height: 12,
+                                  width: 12,
+                                  decoration: BoxDecoration(
+                                    color: FactorColorsDark.kSunsetOrange,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              )
+                            : null,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          Visibility(
+            visible: _exchangeRateProvider.isSelectCoinScreenInteractionDisabled,
             child: GestureDetector(
               onTap: () {
-                _exchangeRateProvider.selectACoin(index);
+                _exchangeRateProvider.setSearchingForACoin(false);
                 setState(() {});
               },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextView(text: 'Algerian Dinar DZD', fontSize: 18, fontWeight: FontWeight.w500),
-                  Container(
-                    height: 20,
-                    width: 20,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: _exchangeRateProvider.selectedCoin == index
-                            ? FactorColorsDark.kSunsetOrange
-                            : FactorColorsDark.kLightGray,
-                      ),
-                      shape: BoxShape.circle,
-                    ),
-                    child: _exchangeRateProvider.selectedCoin == index
-                        ? Center(
-                            child: AnimatedContainer(
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.elasticOut,
-                              height: 12,
-                              width: 12,
-                              decoration: BoxDecoration(
-                                color: FactorColorsDark.kSunsetOrange,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          )
-                        : null,
-                  ),
-                ],
-              ),
+              child: Container(color: FactorColorsDark.kMidnight.withAlpha((0.6 * 255).toInt())),
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
