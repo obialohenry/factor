@@ -7,7 +7,7 @@ class ExchangeRateCalculator {
   List<String> get keyPadValues => _keyPadValues;
   String _coinAmountDigits = '0';
   String get coinAmountDigits => _coinAmountDigits;
-  num _currencyAmount = 0;
+  final num _currencyAmount = 0;
   num get currencyAmount => _currencyAmount;
   double _exchangeRateItemFontSize = 32;
   double get exchangeRateItemFontSize => _exchangeRateItemFontSize;
