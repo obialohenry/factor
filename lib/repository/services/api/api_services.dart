@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:factor/src/config.dart';
 import 'package:factor/src/repository.dart';
 
-class ApiServices {
+class ApiServices extends ApiConstants {
   final dio = Dio();
 
   /// Sends a `GET` request using [dio.get].
@@ -28,13 +29,13 @@ class ApiServices {
         print('👀 ${error.response!.statusCode}');
         print('👀 ${error.response!.data}');
       } else {
-        print('👀 No response received: $error');
+        print('👀 ${FactorStrings.errNoResponseReceived}: $error');
       }
     } on TimeoutException {
-      throw RequestTimeoutException("SERVER CONNECTION TIME OUT.");
+      throw RequestTimeoutException(FactorStrings.errServerConnectionTimeOut.toUpperCase());
     } catch (e, s) {
       print('👀 $s');
-      throw HttpException("Something went wrong, $e");
+      throw HttpException("${FactorStrings.errSomethingWentWrong}, $e");
     }
   }
 
@@ -67,13 +68,13 @@ class ApiServices {
         print('👀 ${error.response!.statusCode}');
         print('👀 ${error.response!.data}');
       } else {
-        print('👀 No response received: $error');
+        print('👀 ${FactorStrings.errNoResponseReceived}: $error');
       }
     } on TimeoutException {
-      throw RequestTimeoutException("SERVER CONNECTION TIME OUT.");
+      throw RequestTimeoutException(FactorStrings.errServerConnectionTimeOut.toUpperCase());
     } catch (e, s) {
       print('👀 $s');
-      throw HttpException("Something went wrong, $e");
+      throw HttpException("${FactorStrings.errSomethingWentWrong}, $e");
     }
   }
 
@@ -130,9 +131,11 @@ class ApiServices {
 
         ///* This is a catch block for when the server returns a 500 error.
         _logResponse(response);
-        throw InternalServerException('Error occured while communicating with the server.');
+        throw InternalServerException(FactorStrings.errErrorWhileCommunicatingWithServer);
       default:
-        throw UnknownApiException('Unhandled status code: ${response.statusCode}');
+        throw UnknownApiException(
+          '${FactorStrings.msgUnhandledStatusCode}: ${response.statusCode}',
+        );
     }
   }
 }

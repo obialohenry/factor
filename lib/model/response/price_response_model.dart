@@ -1,12 +1,12 @@
 class PriceResponseModel {
-  Id? id;
+  TokenIDModel? id;
 
   PriceResponseModel({
     this.id,
   });
 
   PriceResponseModel copyWith({
-    Id? id,
+    TokenIDModel? id,
   }) {
     return PriceResponseModel(
       id: id ?? this.id,
@@ -23,7 +23,7 @@ class PriceResponseModel {
     return PriceResponseModel(
       id: json['id'] == null
           ? null
-          : Id.fromJson(json['id'] as Map<String, dynamic>),
+          : TokenIDModel.fromJson(json['id'] as Map<String, dynamic>),
     );
   }
 
@@ -41,26 +41,26 @@ class PriceResponseModel {
           id == other.id;
 }
 
-class Id {
+class TokenIDModel {
   double? usdPrice;
   int? blockId;
   int? decimals;
   double? priceChange24h;
 
-  Id({
+  TokenIDModel({
     this.usdPrice,
     this.blockId,
     this.decimals,
     this.priceChange24h,
   });
 
-  Id copyWith({
+  TokenIDModel copyWith({
     double? usdPrice,
     int? blockId,
     int? decimals,
     double? priceChange24h,
   }) {
-    return Id(
+    return TokenIDModel(
       usdPrice: usdPrice ?? this.usdPrice,
       blockId: blockId ?? this.blockId,
       decimals: decimals ?? this.decimals,
@@ -77,8 +77,8 @@ class Id {
     };
   }
 
-  factory Id.fromJson(Map<String, dynamic> json) {
-    return Id(
+  factory TokenIDModel.fromJson(Map<String, dynamic> json) {
+    return TokenIDModel(
       usdPrice: json['usdPrice'] as double?,
       blockId: json['blockId'] as int?,
       decimals: json['decimals'] as int?,
@@ -96,7 +96,7 @@ class Id {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Id &&
+      other is TokenIDModel &&
           runtimeType == other.runtimeType &&
           usdPrice == other.usdPrice &&
           blockId == other.blockId &&
