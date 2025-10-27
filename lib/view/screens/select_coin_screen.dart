@@ -1,7 +1,11 @@
-import 'package:factor/src/components.dart';
+import 'package:factor/model/response/token_response_model.dart';
 import 'package:factor/src/config.dart';
 import 'package:factor/src/view_model.dart';
+import 'package:factor/view/components/neumorphic_bottom_sheet.dart';
+import 'package:factor/view/components/neumorphic_selector.dart';
+import 'package:factor/view/components/token_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SelectCoinScreen extends StatefulWidget {
   const SelectCoinScreen({super.key});
@@ -11,132 +15,119 @@ class SelectCoinScreen extends StatefulWidget {
 }
 
 class _SelectCoinScreenState extends State<SelectCoinScreen> {
-  final ExchangeRateCalculator _exchangeRateProvider = ExchangeRateCalculator();
   final TextEditingController _searchController = TextEditingController();
-  final FocusNode _searchFieldsFocus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onQueryChanged);
+  }
 
   @override
   void dispose() {
+    _searchController.removeListener(_onQueryChanged);
     _searchController.dispose();
-    _searchFieldsFocus.dispose();
     super.dispose();
+  }
+
+  void _onQueryChanged() {
+    context.read<ExchangeRateViewModel>().searchTokens(_searchController.text);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: FactorColorsDark.kMidnight,
-      appBar: PreferredSize(
-        preferredSize: Size(0, 40),
-        child: AnimatedSwitcher(
-          duration: Duration(milliseconds: 600),
-          transitionBuilder: (child, animation) {
-            return ScaleTransition(
-              scale: CurvedAnimation(parent: animation, curve: Curves.elasticOut),
-              child: child,
-            );
-          },
-          child: _exchangeRateProvider.searchingForACoin
-              ? FactorsAppBars.searchAppBar(
-                  context,
-                  controller: _searchController,
-                  focusNode: _searchFieldsFocus,
-                  onCancelTap: () {
-                    _exchangeRateProvider.setSearchingForACoin(false);
-                    _searchController.clear();
-                    setState(() {});
-                  },
-                  onTextFieldChange: (value) {
-                    if (_searchController.text.isEmpty) {
-                      _exchangeRateProvider.setSelectCoinScreenInteractionDisabilityStatus(true);
-                    } else if (_searchController.text.isNotEmpty) {
-                      _exchangeRateProvider.setSelectCoinScreenInteractionDisabilityStatus(false);
-                    }
-                    setState(() {});
-                  },
-                  onCloseIconTap: () {
-                    _searchController.clear();
-                    _exchangeRateProvider.setSelectCoinScreenInteractionDisabilityStatus(true);
-                    setState(() {});
-                  },
-                )
-              : FactorsAppBars.selectAppBar(
-                  context,
-                  title: FactorStrings.hdrSelectCoin,
-                  onSearchOnTap: () {
-                    _exchangeRateProvider.setSearchingForACoin(true);
-                    setState(() {});
-                  },
-                ),
-        ),
+    final viewModel = context.watch<ExchangeRateViewModel>();
+    final tokens = viewModel.tokens;
+    final isInitialLoading = viewModel.tokensLoading && tokens.isEmpty;
+    final isSearching = viewModel.tokenSearchLoading;
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        24,
+        0,
+        24,
+        0, 
       ),
-      body: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ListView.builder(
-            itemCount: 5,
-            shrinkWrap: true,
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.only(top: 30, left: 15, right: 15),
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 30),
-                child: GestureDetector(
-                  onTap: () {
-                    _exchangeRateProvider.selectACoin(index);
-                    setState(() {});
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextView(
-                        text: 'Algerian Dinar DZD',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      Container(
-                        height: 20,
-                        width: 20,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: _exchangeRateProvider.selectedCoin == index
-                                ? FactorColorsDark.kSunsetOrange
-                                : FactorColorsDark.kLightGray,
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        child: _exchangeRateProvider.selectedCoin == index
-                            ? Center(
-                                child: AnimatedContainer(
-                                  duration: Duration(milliseconds: 300),
-                                  curve: Curves.elasticOut,
-                                  height: 12,
-                                  width: 12,
-                                  decoration: BoxDecoration(
-                                    color: FactorColorsDark.kSunsetOrange,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              )
-                            : null,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
+          const NeumorphicSheetHandle(),
+          Text(
+            FactorStrings.hdrSelectCoin,
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
           ),
-          Visibility(
-            visible: _exchangeRateProvider.isSelectCoinScreenInteractionDisabled,
-            child: GestureDetector(
-              onTap: () {
-                _exchangeRateProvider.setSearchingForACoin(false);
-                setState(() {});
-              },
-              child: Container(color: FactorColorsDark.kMidnight.withAlpha((0.6 * 255).toInt())),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _searchController,
+            autofocus: true,
+            decoration: InputDecoration(
+              hintText: FactorStrings.hintSearch,
+              prefixIcon: const Icon(Icons.search_rounded),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      onPressed: () => _searchController.clear(),
+                      icon: const Icon(Icons.close_rounded),
+                    )
+                  : null,
             ),
+          ),
+          const SizedBox(height: 20),
+          if (isSearching)
+            const Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: LinearProgressIndicator(minHeight: 2),
+            ),
+          Expanded(
+            child: isInitialLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    itemCount: tokens.length,
+                    itemBuilder: (context, index) {
+                      final token = tokens[index];
+                      final subtitle = _buildSubtitle(token);
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 4, left: 4),
+                        child: NeumorphicSelectorTile(
+                          title: token.symbol?.toUpperCase() ?? '--',
+                          subtitle: subtitle.isEmpty ? null : subtitle,
+                          leading: TokenAvatar(
+                            imageUrl: token.icon,
+                            symbol: token.symbol,
+                            size: 40,
+                          ),
+                          isSelected: token.id == viewModel.selectedToken?.id,
+                          trailing: token.id == viewModel.selectedToken?.id
+                              ? Icon(
+                                  Icons.check_circle,
+                                  color: Theme.of(context).colorScheme.primary,
+                                )
+                              : null,
+                          onTap: () async {
+                            final success = await viewModel.selectToken(token);
+                            if (success && context.mounted) {
+                              Navigator.of(context).pop();
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),
     );
   }
+}
+
+String _buildSubtitle(TokenResponseModel token) {
+  final parts = <String>[];
+  if (token.name != null && token.name!.isNotEmpty) {
+    parts.add(token.name!);
+  }
+  if (token.id != null && token.id!.isNotEmpty) {
+    parts.add(token.id!);
+  }
+  return parts.join(' • ');
 }

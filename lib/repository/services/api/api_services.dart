@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:factor/src/config.dart';
 import 'package:factor/src/repository.dart';
+import 'package:flutter/foundation.dart';
 
 class ApiServices extends ApiConstants {
   final dio = Dio();
@@ -18,23 +19,34 @@ class ApiServices extends ApiConstants {
   /// Catches and handles [DioException] and [TimeoutException].
   /// Returns the response as a Dart object or throws a custom exception on error.
   Future<dynamic> get({required Uri uri, Map<String, String>? header}) async {
-    print('👀 Making request to $uri');
+    debugPrint('👀 Making request to $uri');
     final options = Options(headers: header, responseType: ResponseType.json);
     try {
       Response response;
-      response = await dio.get(uri.toString(), options: options).timeout(Duration(seconds: 30));
+      response = await dio
+          .get(uri.toString(), options: options)
+          .timeout(Duration(seconds: 30));
       return _dioResponse(response);
     } on DioException catch (error, s) {
       if (error.response != null) {
-        print('👀 ${error.response!.statusCode}');
-        print('👀 ${error.response!.data}');
+        debugPrint('👀 ${error.response!.statusCode}');
+        debugPrint('👀 ${error.response!.data}');
       } else {
-        print('👀 ${FactorStrings.errNoResponseReceived}: $error');
+        debugPrint('👀 ${FactorStrings.errNoResponseReceived}: $error');
       }
+      debugPrintStack(stackTrace: s);
+      if (error.response?.statusCode == 429) {
+        throw RateLimitException(FactorStrings.errRateLimit);
+      }
+      throw HttpException(
+        '${FactorStrings.errSomethingWentWrong}, ${error.message}',
+      );
     } on TimeoutException {
-      throw RequestTimeoutException(FactorStrings.errServerConnectionTimeOut.toUpperCase());
+      throw RequestTimeoutException(
+        FactorStrings.errServerConnectionTimeOut.toUpperCase(),
+      );
     } catch (e, s) {
-      print('👀 $s');
+      debugPrintStack(stackTrace: s);
       throw HttpException("${FactorStrings.errSomethingWentWrong}, $e");
     }
   }
@@ -54,8 +66,8 @@ class ApiServices extends ApiConstants {
     Map<String, String>? header,
     required Map<String, dynamic> body,
   }) async {
-    print('👀 Making request to $uri');
-    print('👀 $body');
+    debugPrint('👀 Making request to $uri');
+    debugPrint('👀 $body');
     final options = Options(headers: header, responseType: ResponseType.json);
     try {
       Response response;
@@ -65,23 +77,32 @@ class ApiServices extends ApiConstants {
       return _dioResponse(response);
     } on DioException catch (error, s) {
       if (error.response != null) {
-        print('👀 ${error.response!.statusCode}');
-        print('👀 ${error.response!.data}');
+        debugPrint('👀 ${error.response!.statusCode}');
+        debugPrint('👀 ${error.response!.data}');
       } else {
-        print('👀 ${FactorStrings.errNoResponseReceived}: $error');
+        debugPrint('👀 ${FactorStrings.errNoResponseReceived}: $error');
       }
+      debugPrintStack(stackTrace: s);
+      if (error.response?.statusCode == 429) {
+        throw RateLimitException(FactorStrings.errRateLimit);
+      }
+      throw HttpException(
+        '${FactorStrings.errSomethingWentWrong}, ${error.message}',
+      );
     } on TimeoutException {
-      throw RequestTimeoutException(FactorStrings.errServerConnectionTimeOut.toUpperCase());
+      throw RequestTimeoutException(
+        FactorStrings.errServerConnectionTimeOut.toUpperCase(),
+      );
     } catch (e, s) {
-      print('👀 $s');
+      debugPrintStack(stackTrace: s);
       throw HttpException("${FactorStrings.errSomethingWentWrong}, $e");
     }
   }
 
   /// Logs the response status code and body to the console.
   void _logResponse(Response response) {
-    print("🔥RESPONSE STATUS CODE: ${response.statusCode}");
-    print("🔥RESPONSE DATA: ${response.data}");
+    debugPrint("🔥RESPONSE STATUS CODE: ${response.statusCode}");
+    debugPrint("🔥RESPONSE DATA: ${response.data}");
   }
 
   /// Handles the API response returned from [dio].
@@ -131,7 +152,14 @@ class ApiServices extends ApiConstants {
 
         ///* This is a catch block for when the server returns a 500 error.
         _logResponse(response);
-        throw InternalServerException(FactorStrings.errErrorWhileCommunicatingWithServer);
+        throw InternalServerException(
+          FactorStrings.errErrorWhileCommunicatingWithServer,
+        );
+      case 429:
+
+        ///* Jupiter rate limiting
+        _logResponse(response);
+        throw RateLimitException(FactorStrings.errRateLimit);
       default:
         throw UnknownApiException(
           '${FactorStrings.msgUnhandledStatusCode}: ${response.statusCode}',

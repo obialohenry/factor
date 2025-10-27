@@ -1,16 +1,4 @@
 class TokenResponseModel {
-  String? id;
-  String? name;
-  String? symbol;
-  String? icon;
-  int? decimals;
-  double? circSupply;
-  double? totalSupply;
-  String? tokenProgram;
-  int? ctLikes;
-  int? smartCtLikes;
-  String? updatedAt;
-
   TokenResponseModel({
     this.id,
     this.name,
@@ -23,7 +11,27 @@ class TokenResponseModel {
     this.ctLikes,
     this.smartCtLikes,
     this.updatedAt,
+    this.tags,
+    this.usdPrice,
+    this.launchpad,
+    this.holderCount,
   });
+
+  final String? id;
+  final String? name;
+  final String? symbol;
+  final String? icon;
+  final int? decimals;
+  final double? circSupply;
+  final double? totalSupply;
+  final String? tokenProgram;
+  final int? ctLikes;
+  final int? smartCtLikes;
+  final String? updatedAt;
+  final List<String>? tags;
+  final double? usdPrice;
+  final String? launchpad;
+  final int? holderCount;
 
   TokenResponseModel copyWith({
     String? id,
@@ -37,6 +45,10 @@ class TokenResponseModel {
     int? ctLikes,
     int? smartCtLikes,
     String? updatedAt,
+    List<String>? tags,
+    double? usdPrice,
+    String? launchpad,
+    int? holderCount,
   }) {
     return TokenResponseModel(
       id: id ?? this.id,
@@ -50,6 +62,10 @@ class TokenResponseModel {
       ctLikes: ctLikes ?? this.ctLikes,
       smartCtLikes: smartCtLikes ?? this.smartCtLikes,
       updatedAt: updatedAt ?? this.updatedAt,
+      tags: tags ?? this.tags,
+      usdPrice: usdPrice ?? this.usdPrice,
+      launchpad: launchpad ?? this.launchpad,
+      holderCount: holderCount ?? this.holderCount,
     );
   }
 
@@ -66,6 +82,10 @@ class TokenResponseModel {
       'ctLikes': ctLikes,
       'smartCtLikes': smartCtLikes,
       'updatedAt': updatedAt,
+      'tags': tags,
+      'usdPrice': usdPrice,
+      'launchpad': launchpad,
+      'holderCount': holderCount,
     };
   }
 
@@ -75,38 +95,57 @@ class TokenResponseModel {
       name: json['name'] as String?,
       symbol: json['symbol'] as String?,
       icon: json['icon'] as String?,
-      decimals: json['decimals'] as int?,
-      circSupply: json['circSupply'] as double?,
-      totalSupply: json['totalSupply'] as double?,
+      decimals: (json['decimals'] as num?)?.toInt(),
+      circSupply: (json['circSupply'] as num?)?.toDouble(),
+      totalSupply: (json['totalSupply'] as num?)?.toDouble(),
       tokenProgram: json['tokenProgram'] as String?,
-      ctLikes: json['ctLikes'] as int?,
-      smartCtLikes: json['smartCtLikes'] as int?,
+      ctLikes: (json['ctLikes'] as num?)?.toInt(),
+      smartCtLikes: (json['smartCtLikes'] as num?)?.toInt(),
       updatedAt: json['updatedAt'] as String?,
+      tags: (json['tags'] as List?)?.map((tag) => tag.toString()).toList(),
+      usdPrice: (json['usdPrice'] as num?)?.toDouble(),
+      launchpad: json['launchpad'] as String?,
+      holderCount: (json['holderCount'] as num?)?.toInt(),
+    );
+  }
+
+  bool matchesQuery(String query) {
+    if (query.isEmpty) return true;
+    final normalizedQuery = query.toLowerCase();
+    final attributes = [name, symbol, id];
+    return attributes.whereType<String>().any(
+      (value) => value.toLowerCase().contains(normalizedQuery),
     );
   }
 
   @override
   String toString() =>
-      "TokenResponseModel(id: $id,name: $name,symbol: $symbol,icon: $icon,decimals: $decimals,circSupply: $circSupply,totalSupply: $totalSupply,tokenProgram: $tokenProgram,ctLikes: $ctLikes,smartCtLikes: $smartCtLikes,updatedAt: $updatedAt)";
+      'TokenResponseModel(id: $id, name: $name, symbol: $symbol, icon: $icon, decimals: $decimals, circSupply: $circSupply, totalSupply: $totalSupply, usdPrice: $usdPrice)';
 
   @override
-  int get hashCode => Object.hash(id, name, symbol, icon, decimals, circSupply,
-      totalSupply, tokenProgram, ctLikes, smartCtLikes, updatedAt);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    symbol,
+    icon,
+    decimals,
+    circSupply,
+    totalSupply,
+    tokenProgram,
+    ctLikes,
+    smartCtLikes,
+    updatedAt,
+    usdPrice,
+    launchpad,
+    holderCount,
+  );
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is TokenResponseModel &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          name == other.name &&
-          symbol == other.symbol &&
-          icon == other.icon &&
-          decimals == other.decimals &&
-          circSupply == other.circSupply &&
-          totalSupply == other.totalSupply &&
-          tokenProgram == other.tokenProgram &&
-          ctLikes == other.ctLikes &&
-          smartCtLikes == other.smartCtLikes &&
-          updatedAt == other.updatedAt;
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is TokenResponseModel &&
+            runtimeType == other.runtimeType &&
+            id == other.id &&
+            symbol == other.symbol;
+  }
 }

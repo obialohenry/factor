@@ -1,30 +1,55 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:factor/model/response/fiat_currency_model.dart';
+import 'package:factor/model/response/price_response_model.dart';
+import 'package:factor/model/response/token_response_model.dart';
+import 'package:factor/src/view_model.dart';
+import 'package:factor/view/screens/exchange_rate_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:factor/main.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('ExchangeRateScreen renders seeded data', (
+    WidgetTester tester,
+  ) async {
+    final viewModel = ExchangeRateViewModel();
+    final token = TokenResponseModel(
+      id: 'So111',
+      name: 'Solana',
+      symbol: 'SOL',
+    );
+    final currency = FiatCurrency(
+      code: 'USD',
+      name: 'US Dollar',
+      symbol: r'$',
+      rateToUsd: 1,
+    );
+    final price = TokenPrice(
+      usdPrice: 205.12,
+      blockId: 1,
+      decimals: 9,
+      priceChange24h: 2.1,
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    viewModel.seedData(
+      tokens: [token],
+      currencies: [currency],
+      selectedToken: token,
+      selectedCurrency: currency,
+      price: price,
+      priceFetchedAt: DateTime(2025, 10, 14, 12, 00),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await tester.pumpWidget(
+      ChangeNotifierProvider<ExchangeRateViewModel>.value(
+        value: viewModel,
+        child: const MaterialApp(home: ExchangeRateScreen()),
+      ),
+    );
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Factor'), findsOneWidget);
+    expect(find.textContaining('SOL'), findsWidgets);
+    expect(find.textContaining('USD'), findsWidgets);
   });
 }

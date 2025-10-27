@@ -1,7 +1,10 @@
-import 'package:factor/src/components.dart';
+import 'package:factor/model/response/fiat_currency_model.dart';
 import 'package:factor/src/config.dart';
 import 'package:factor/src/view_model.dart';
+import 'package:factor/view/components/neumorphic_bottom_sheet.dart';
+import 'package:factor/view/components/neumorphic_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SelectCurrencyScreen extends StatefulWidget {
   const SelectCurrencyScreen({super.key});
@@ -11,136 +14,123 @@ class SelectCurrencyScreen extends StatefulWidget {
 }
 
 class _SelectCurrencyScreenState extends State<SelectCurrencyScreen> {
-  final ExchangeRateCalculator _exchangeRateProvider = ExchangeRateCalculator();
   final TextEditingController _searchController = TextEditingController();
-  final FocusNode _searchFieldsFocus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onQueryChanged);
+  }
 
   @override
   void dispose() {
+    _searchController.removeListener(_onQueryChanged);
     _searchController.dispose();
-    _searchFieldsFocus.dispose();
     super.dispose();
+  }
+
+  void _onQueryChanged() {
+    context.read<ExchangeRateViewModel>().searchCurrencies(
+      _searchController.text,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: FactorColorsDark.kMidnight,
-      appBar: PreferredSize(
-        preferredSize: Size(0, 40),
-        child: AnimatedSwitcher(
-          duration: Duration(milliseconds: 600),
-          transitionBuilder: (child, animation) {
-            return ScaleTransition(
-              scale: CurvedAnimation(parent: animation, curve: Curves.elasticOut),
-              child: child,
-            );
-          },
-          child: _exchangeRateProvider.searchingForACurrency
-              ? FactorsAppBars.searchAppBar(
-                  context,
-                  controller: _searchController,
-                  focusNode: _searchFieldsFocus,
-                  onCancelTap: () {
-                    _exchangeRateProvider.setSearchingForACurrency(false);
-                    _searchController.clear();
-                    setState(() {});
-                  },
-                  onTextFieldChange: (value) {
-                    if (_searchController.text.isEmpty) {
-                      _exchangeRateProvider.setSelectCurrencyScreenInteractionDisabilityStatus(
-                        true,
-                      );
-                    } else if (_searchController.text.isNotEmpty) {
-                      _exchangeRateProvider.setSelectCurrencyScreenInteractionDisabilityStatus(
-                        false,
-                      );
-                    }
-                    setState(() {});
-                  },
-                  onCloseIconTap: () {
-                    _searchController.clear();
-                    _exchangeRateProvider.setSelectCurrencyScreenInteractionDisabilityStatus(true);
-                    setState(() {});
-                  },
-                )
-              : FactorsAppBars.selectAppBar(
-                  context,
-                  title: FactorStrings.hdrSelectCurrency,
-                  onSearchOnTap: () {
-                    _exchangeRateProvider.setSearchingForACurrency(true);
-                    setState(() {});
-                  },
-                ),
+    final viewModel = context.watch<ExchangeRateViewModel>();
+    final currencies = viewModel.currencies;
+    final isLoading = viewModel.currenciesLoading && currencies.isEmpty;
+
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(24, 0, 24, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const NeumorphicSheetHandle(),
+            Text(
+              FactorStrings.hdrSelectCurrency,
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _searchController,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: FactorStrings.hintSearch,
+                prefixIcon: const Icon(Icons.search_rounded),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        onPressed: () => _searchController.clear(),
+                        icon: const Icon(Icons.close_rounded),
+                      )
+                    : null,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      itemCount: currencies.length,
+                      itemBuilder: (context, index) {
+                        final FiatCurrency currency = currencies[index];
+                        final subtitle =
+                            '1 USD = ${currency.rateToUsd.toStringAsFixed(4)} ${currency.code}';
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 4, left: 4),
+                          child: NeumorphicSelectorTile(
+                            title: '${currency.code} • ${currency.name}',
+                            subtitle: subtitle,
+                            leading: _CurrencyLeading(
+                              symbol: currency.symbol,
+                              code: currency.code,
+                            ),
+                            isSelected:
+                                currency.code ==
+                                viewModel.selectedCurrency?.code,
+                            trailing:
+                                currency.code ==
+                                    viewModel.selectedCurrency?.code
+                                ? Icon(
+                                    Icons.check_circle,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                  )
+                                : null,
+                            onTap: () {
+                              viewModel.selectCurrency(currency);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
         ),
       ),
-      body: Stack(
-        children: [
-          ListView.builder(
-            itemCount: 20,
-            shrinkWrap: true,
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.only(top: 30, left: 15, right: 15),
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 30),
-                child: GestureDetector(
-                  onTap: () {
-                    _exchangeRateProvider.selectACurrency(index);
-                    setState(() {});
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextView(
-                        text: 'Algerian Dinar DZD',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      Container(
-                        height: 20,
-                        width: 20,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: _exchangeRateProvider.selectedCurrency == index
-                                ? FactorColorsDark.kSunsetOrange
-                                : FactorColorsDark.kLightGray,
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        child: _exchangeRateProvider.selectedCurrency == index
-                            ? Center(
-                                child: AnimatedContainer(
-                                  duration: Duration(milliseconds: 300),
-                                  curve: Curves.elasticOut,
-                                  height: 12,
-                                  width: 12,
-                                  decoration: BoxDecoration(
-                                    color: FactorColorsDark.kSunsetOrange,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              )
-                            : null,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-          Visibility(
-            visible: _exchangeRateProvider.isSelectCurrencyScreenInteractionDisabled,
-            child: GestureDetector(
-              onTap: () {
-                _exchangeRateProvider.setSearchingForACurrency(false);
-                setState(() {});
-              },
-              child: Container(color: FactorColorsDark.kMidnight.withAlpha((0.6 * 255).toInt())),
-            ),
-          ),
-        ]
-      ),
+    );
+  }
+}
+
+class _CurrencyLeading extends StatelessWidget {
+  const _CurrencyLeading({required this.symbol, required this.code});
+
+  final String symbol;
+  final String code;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final display = symbol.length > 1 ? code : symbol;
+    return CircleAvatar(
+      backgroundColor: theme.colorScheme.secondary.withValues(alpha: 0.1),
+      foregroundColor: theme.colorScheme.secondary,
+      child: Text(display),
     );
   }
 }

@@ -1,35 +1,28 @@
-import 'package:factor/src/model.dart';
-import 'package:factor/src/repository.dart';
+import 'package:factor/repository/backend/factors_backend.dart';
+import 'package:flutter/foundation.dart';
 
 class TokensAndPrice {
   TokensAndPrice._();
   static final TokensAndPrice _internal = TokensAndPrice._();
   factory TokensAndPrice() => _internal;
 
-  final factorsService = FactorsBackend();
+  final FactorsBackend _backend = FactorsBackend();
 
-  TokenIDModel? _token;
-
-  Future<void> getTokenPriceInUSD({required String tokenId, required String tokenName}) async {
+  /// Legacy wrapper that fetches the USD price for a given [tokenId].
+  /// Returns the USD price if available, otherwise `null`.
+  Future<double?> getTokenPriceInUSD({
+    required String tokenId,
+    String? tokenName,
+  }) async {
     try {
-      final response = await factorsService.getPriceBackend(tokenId);
-
-      if (response == null) {
-        print("❌ Nullable response");
-        return;
-      }
-
-      if ((response as Map<String, dynamic>).isEmpty) {
-        print("❌ No Data");
-        return;
-      }
-      
-      final data = response[tokenId] as Map<String, dynamic>;
-      _token = TokenIDModel.fromJson(data);
-      print("$tokenName USD price is: ${_token?.usdPrice}");
-    } catch (e, s) {
-      print("👀 $s");
-      print("found it😅: $e");
+      final tokenPrice = await _backend.getPriceBackend(tokenId);
+      return tokenPrice.usdPrice;
+    } catch (error, stackTrace) {
+      debugPrint(
+        'TokensAndPrice price lookup failed for $tokenId ($tokenName): $error',
+      );
+      debugPrintStack(stackTrace: stackTrace);
+      return null;
     }
   }
 }

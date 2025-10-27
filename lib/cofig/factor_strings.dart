@@ -20,4 +20,6 @@ class FactorStrings {
   static const errErrorWhileCommunicatingWithServer =
       'Error occured while communicating with the server.';
   static const msgUnhandledStatusCode = 'Unhandled status code';
+  static const errRateLimit = 'Too many requests. Please try again shortly.';
+  static const errPriceUnavailable = 'Price unavailable - token may have insufficient liquidity';
 }

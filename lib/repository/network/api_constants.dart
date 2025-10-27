@@ -31,8 +31,11 @@ class ApiConstants {
       Uri(scheme: schema, host: host, path: '$tokens/$version/toptrending/1h');
 
   /// Top organic score tokens (24h interval)
-  Uri get topOrganicScoreCategoryUri =>
-      Uri(scheme: schema, host: host, path: '$tokens/$version/toporganicscore/24h');
+  Uri get topOrganicScoreCategoryUri => Uri(
+    scheme: schema,
+    host: host,
+    path: '$tokens/$version/toporganicscore/24h',
+  );
 
   /// Top traded tokens (6h interval)
   Uri get topTradedCategoryUri =>
@@ -47,13 +50,34 @@ class ApiConstants {
     topTradedCategoryUri,
   ];
 
+  /// Full token catalogue (used for search/autocomplete)
+  /// Uses verified tokens from v2 API as the comprehensive list
+  Uri get allTokensUri => Uri(
+    scheme: schema,
+    host: host,
+    path: '$tokens/$version/$tag',
+    queryParameters: {'query': 'verified'},
+  );
+
+  /// Remote token search endpoint to match arbitrary queries.
+  Uri searchTokensUri(String query, {int limit = 50}) => Uri(
+    scheme: schema,
+    host: host,
+    path: '$tokens/$version/search',
+    queryParameters: {'query': query, 'limit': '$limit'},
+  );
+
   ///<------------------------------- Token ends here ----------------------------------->
   ///
   ///<------------------------------- Price begins here ----------------------------------->
   /// Returns the price of a token in USDC (treated as USD).
   /// - [id] is the token's mint address (e.g., SOL's mint).
-  Uri priceInUSDUri(String id) =>
-      Uri(scheme: schema, host: host, path: '$price/$version3', queryParameters: {'ids': id});
+  Uri priceInUSDUri(String id) => Uri(
+    scheme: schema,
+    host: host,
+    path: '$price/$version3',
+    queryParameters: {'ids': id},
+  );
 
   ///<------------------------------- Price ends here ----------------------------------->
 

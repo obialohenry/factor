@@ -12,4 +12,5 @@ export 'package:factor/repository/services/api/api_services.dart';
 
 //<------------------------------- Backend begins here ----------------------------------->
 export 'package:factor/repository/backend/factors_backend.dart';
+export 'package:factor/repository/backend/currency_backend.dart';
 //<------------------------------- Backend ends here ----------------------------------->

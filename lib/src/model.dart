@@ -4,4 +4,5 @@ export 'package:factor/model/local/dummy_data.dart';
 
 //<------------------------------- Response Model begins here ----------------------------------->
 export 'package:factor/model/response/price_response_model.dart';
+export 'package:factor/model/response/fiat_currency_model.dart';
 //<------------------------------- Response Model ends here ----------------------------------->

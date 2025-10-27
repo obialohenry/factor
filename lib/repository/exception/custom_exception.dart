@@ -23,7 +23,7 @@ class UnauthorisedException extends CustomException {
 }
 
 class ForbiddenRequestException extends CustomException {
-   /// Thrown when the server returns a 403 Forbidden response.
+  /// Thrown when the server returns a 403 Forbidden response.
   /// Indicates that the request is understood but access is denied.
   ForbiddenRequestException([String? message]) : super("Forbidden: ", message);
 }
@@ -33,14 +33,19 @@ class RequestTimeoutException extends CustomException {
   RequestTimeoutException([String? message]) : super("Timeout: ", message);
 }
 
+class RateLimitException extends CustomException {
+  /// Thrown when the server indicates too many requests.
+  RateLimitException([String? message]) : super("Rate Limit: ", message);
+}
+
 class InternalServerException extends CustomException {
   /// Thrown when the server returns a 500 Internal Server Error response.
   InternalServerException([String? message])
-      : super("Internal Server Error: ", message);
+    : super("Internal Server Error: ", message);
 }
 
 class UnknownApiException extends CustomException {
   /// Thrown when the server returns an unexpected or unhandled status code.
   UnknownApiException([String? message])
-      : super("Unknown API Error: ", message);
+    : super("Unknown API Error: ", message);
 }

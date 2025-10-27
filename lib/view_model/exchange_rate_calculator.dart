@@ -3,7 +3,20 @@ class ExchangeRateCalculator {
   static final ExchangeRateCalculator _instance = ExchangeRateCalculator._();
   factory ExchangeRateCalculator() => _instance;
 
-  final List<String> _keyPadValues = ['7', '8', '9', '4', '5', '6', '1', '2', '3', '00', '0', '.'];
+  final List<String> _keyPadValues = [
+    '7',
+    '8',
+    '9',
+    '4',
+    '5',
+    '6',
+    '1',
+    '2',
+    '3',
+    '00',
+    '0',
+    '.',
+  ];
   List<String> get keyPadValues => _keyPadValues;
   String _coinAmountDigits = '0';
   String get coinAmountDigits => _coinAmountDigits;
@@ -22,9 +35,13 @@ class ExchangeRateCalculator {
   bool _searchingForACurrency = false;
   bool get searchingForACurrency => _searchingForACurrency;
   bool _isSelectCoinScreenInteractionDisabled = false;
-  bool get isSelectCoinScreenInteractionDisabled => _isSelectCoinScreenInteractionDisabled;
+  bool get isSelectCoinScreenInteractionDisabled =>
+      _isSelectCoinScreenInteractionDisabled;
   bool _isSelectCurrencyScreenInteractionDisabled = false;
-  bool get isSelectCurrencyScreenInteractionDisabled => _isSelectCurrencyScreenInteractionDisabled;
+  bool get isSelectCurrencyScreenInteractionDisabled =>
+      _isSelectCurrencyScreenInteractionDisabled;
+  bool hapticsEnabled = true;
+  bool audioClickEnabled = true;
 
   ///Method handles keypad tap actions.
   /// - If the key is `'clear'`, resets [_coinAmountDigits] to `'0'`.
@@ -41,7 +58,10 @@ class ExchangeRateCalculator {
     }
     if (value == 'delete') {
       if (_coinAmountDigits.length > 1) {
-        _coinAmountDigits = _coinAmountDigits.substring(0, _coinAmountDigits.length - 1);
+        _coinAmountDigits = _coinAmountDigits.substring(
+          0,
+          _coinAmountDigits.length - 1,
+        );
         _maximumDigitsReached = false;
         adjustFontSizeByListLength();
       } else {
@@ -86,9 +106,21 @@ class ExchangeRateCalculator {
     if (_coinAmountDigits.length <= 7) {
       _exchangeRateItemFontSize = maxFontSize;
     } else {
-      final reductionAmount = (_coinAmountDigits.length - reductionStartLength) * reduceFontSizeBy;
+      final reductionAmount =
+          (_coinAmountDigits.length - reductionStartLength) * reduceFontSizeBy;
       _exchangeRateItemFontSize = maxFontSize - reductionAmount;
     }
+  }
+
+  /// Overrides the current coin amount with [digits], keeping clamp logic in sync.
+  void setCoinAmountDigits(String digits) {
+    if (digits.isEmpty) {
+      _coinAmountDigits = '0';
+    } else {
+      _coinAmountDigits = digits;
+    }
+    _maximumDigitsReached = _coinAmountDigits.length >= 15;
+    adjustFontSizeByListLength();
   }
 
   ///Sets the currency index selected by the user for coin rate conversion.
